@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+  <name>teb_local_planner_testing</name>
+  <version>0.0.1</version>
+  <description>The teb_local_planner_testing package</description>
+
+  <maintainer email="zhoujiny404@gmail.com">JasonZhou404</maintainer>
+  <author email="zhoujiny404@gmail.com">JasonZhou404</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>stage_ros</run_depend>
+  <run_depend>teb_local_planner</run_depend>
+  <run_depend>move_base</run_depend>
+  <run_depend>map_server</run_depend>
+  <run_depend>amcl</run_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+
+</package>
