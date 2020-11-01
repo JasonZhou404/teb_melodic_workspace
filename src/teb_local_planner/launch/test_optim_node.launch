@@ -1,0 +1,18 @@
+<launch>
+	
+  	<!--- Run optimization test node -->
+   	<node pkg="teb_local_planner" type="test_optim_node" name="test_optim_node" output="screen">
+		<rosparam file="$(find teb_local_planner)/cfg/carlike_teb_local_planner_params.yaml" command="load" />
+	</node>
+
+  	<!-- Publish Obstacles-->
+  	<node name="publish_parking_boundaries" pkg="teb_local_planner" type="publish_parking_boundaries.py" output="screen" />
+
+  	<!-- Visualize feedback-->
+  	<node name="publish_feedback" pkg="teb_local_planner" type="publish_feedback.py" output="screen" />
+
+  	<!-- RVIZ -->
+  	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find teb_local_planner)/cfg/rviz_test_optim.rviz" />
+
+</launch>
+

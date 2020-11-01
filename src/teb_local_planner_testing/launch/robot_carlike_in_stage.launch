@@ -54,7 +54,7 @@
 		<param name="initial_pose_a"            value="0"/>
 	</node>
 
-  	<node name="publish_test_obstacles" pkg="teb_local_planner_testing" type="publish_test_obstacles.py" output="screen" />
+  	<node name="publish_parking_boundaries" pkg="teb_local_planner_testing" type="publish_parking_boundaries.py" output="screen" />
 	
 	  <!--  **************** Visualisation ****************  -->
 	  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_testing)/cfg/rviz_navigation.rviz"/>
