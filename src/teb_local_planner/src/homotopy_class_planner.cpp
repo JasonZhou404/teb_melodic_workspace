@@ -166,8 +166,14 @@ void HomotopyClassPlanner::visualize()
     {
       visualization_->publishLocalPlanAndPoses(best_teb->teb());
 
-      if (best_teb->teb().sizePoses() > 0) //TODO maybe store current pose (start) within plan method as class field.
-        visualization_->publishRobotFootprintModel(best_teb->teb().Pose(0), *robot_model_);
+      // if (best_teb->teb().sizePoses() > 0) //TODO maybe store current pose (start) within plan method as class field.
+      //   visualization_->publishRobotFootprintModel(best_teb->teb().Pose(0), *robot_model_);
+
+      for (int i = 0; i < best_teb->teb().sizePoses(); ++i)
+      {
+        visualization_->publishRobotFootprintModel(best_teb->teb().Pose(i), *robot_model_,
+                                                   "robot_model_at" + boost::to_string(i));
+      }
 
       // feedback message
       if (cfg_->trajectory.publish_feedback)

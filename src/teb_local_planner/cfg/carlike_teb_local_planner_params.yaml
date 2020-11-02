@@ -9,7 +9,7 @@
  global_plan_overwrite_orientation: True
  allow_init_with_backwards_motion: True
  max_global_plan_lookahead_dist: 3.0
- global_plan_viapoint_sep: 1
+ global_plan_viapoint_sep: -1
  global_plan_prune_distance: 1
  exact_arc_length: False
  feasibility_check_no_poses: 2
@@ -40,7 +40,7 @@
  # Obstacles
     
  min_obstacle_dist: 0.1 # This value must also include our robot's expansion, since footprint_model is set to "line".
- inflation_dist: 0.1
+ inflation_dist: 0.2
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 1.0
  obstacle_poses_affected: 15
@@ -67,8 +67,8 @@
  weight_kinematics_nh: 1000
  weight_kinematics_forward_drive: 1
  weight_kinematics_turning_radius: 1
- weight_optimaltime: 1 # must be > 0
- weight_shortest_path: 0
+ weight_optimaltime: 0.1 # must be > 0
+ weight_shortest_path: 2
  weight_obstacle: 100
  weight_inflation: 0.2
  weight_dynamic_obstacle: 10 # not in use yet
@@ -78,11 +78,11 @@
 
  # Homotopy Class Planner
 
- enable_homotopy_class_planning: False
- enable_multithreading: True
+ enable_homotopy_class_planning: True
+ enable_multithreading: False
  max_number_classes: 4
  selection_cost_hysteresis: 1.0
- selection_prefer_initial_plan: 0.95
+ selection_prefer_initial_plan: 0.5
  selection_obst_cost_scale: 10.0
  selection_alternative_time_cost: False
 

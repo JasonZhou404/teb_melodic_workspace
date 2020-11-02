@@ -66,7 +66,7 @@ def velocity_plotter():
     while not rospy.is_shutdown():
 
         if len(trajectory) == 0:
-          continue
+            continue
 
         t = []
         v = []
@@ -74,20 +74,31 @@ def velocity_plotter():
         s = []
         curvature = []
 
-        pre_pose = [trajectory[0].pose.position.x, trajectory[0].pose.position.y]
+        pre_pose = [trajectory[0].pose.position.x,
+                    trajectory[0].pose.position.y]
         accumulated_s = 0
         for point in trajectory:
             t.append(point.time_from_start.to_sec())
             v.append(point.velocity.linear.x)
             omega.append(point.velocity.angular.z)
-            curvature.append(omega[-1] / (v[-1] + 1e-6))
+            if abs(v[-1]) < 0.1:
+                instant_curvature = "NAN"
+            else:
+                instant_curvature = omega[-1] / v[-1]
+            curvature.append(instant_curvature)
             accumulated_s += calc_point_distance(
                 pre_pose[0], pre_pose[1], point.pose.position.x, point.pose.position.y)
             s.append(accumulated_s)
+            pre_pose = [point.pose.position.x, point.pose.position.y]
+
+        for i in range(len(curvature)):
+            if curvature[i] == "NAN":
+                curvature[i] = curvature[i+1] if i + \
+                    1 < len(curvature) else curvature[i-1]
 
         plot_velocity_profile(fig, ax_v, np.asarray(
             t), np.asarray(v))
-        plot_curvature_profile(fig, ax_curvature, s, curvature)
+        plot_curvature_profile(fig, ax_curvature, np.asarray(s), np.asarray(curvature))
 
         r.sleep()
 

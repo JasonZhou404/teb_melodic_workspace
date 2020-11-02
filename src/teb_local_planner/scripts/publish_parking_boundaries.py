@@ -15,7 +15,7 @@ def publish_obstacle_msg():
 
     obstacle_msg = ObstacleArrayMsg()
     obstacle_msg.header.stamp = rospy.Time.now()
-    obstacle_msg.header.frame_id = "odom"  # CHANGE HERE: odom/map
+    obstacle_msg.header.frame_id = "odom/map"  # CHANGE HERE: odom/map
 
     # Add bottom obstacle
     obstacle_msg.obstacles.append(ObstacleMsg())
@@ -48,7 +48,7 @@ def publish_obstacle_msg():
 
     # Add top obstacle
     obstacle_msg.obstacles.append(ObstacleMsg())
-    obstacle_msg.obstacles[0].id = 1
+    obstacle_msg.obstacles[1].id = 1
     v0 = Point32()
     v0.x = 17.0
     v0.y = 5.0
@@ -63,8 +63,7 @@ def publish_obstacle_msg():
     v3.y = 10.0
     obstacle_msg.obstacles[1].polygon.points = [v0, v1, v2, v3]
 
-    r = rospy.Rate(10)  # 10hz
-    t = 0.0
+    r = rospy.Rate(100)  # 10hz
     while not rospy.is_shutdown():
 
         pub.publish(obstacle_msg)

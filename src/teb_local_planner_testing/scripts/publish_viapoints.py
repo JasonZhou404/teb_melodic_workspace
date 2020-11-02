@@ -18,12 +18,12 @@ def publish_via_points_msg():
   
   # Add via-points
   point1 = PoseStamped()
-  point1.pose.position.x = 0.0;
-  point1.pose.position.y = 1.5;
+  point1.pose.position.x = 0.0
+  point1.pose.position.y = 1.5
 
   point2 = PoseStamped()
-  point2.pose.position.x = 2.0;
-  point2.pose.position.y = -0.5;
+  point2.pose.position.x = 2.0
+  point2.pose.position.y = -0.5
 
 
   via_points_msg.poses = [point1, point2]
