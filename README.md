@@ -2,9 +2,10 @@
 
 **Dependencies:**
 
- * Melodic ROS
- * *navigation stack* and *teb_local_planner* package in melodic version
- * *stage* package in melodic version
+ * Melodic ROS (http://wiki.ros.org/melodic/Installation/Ubuntu)
+ * *navigation stack* package in melodic version `sudo apt-get install ros-melodic-navigation`
+ * *stage* package in melodic version `sudo apt-get install ros-melodic-stage-ros`
+ * *teb dependency*:  `rosdep install teb_local_planner`
  * a few python dependency like numpy, matplotlib
 
 **Testing_procedures:**
