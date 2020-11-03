@@ -2,9 +2,11 @@
 
 **Dependencies:**
 
- * Melodic ROS
- * *navigation stack* and *teb_local_planner* package in melodic version
- * *stage* package in melodic version
+ * Melodic ROS (http://wiki.ros.org/melodic/Installation/Ubuntu)
+ * Add current folder into ros package folder. `export ROS_PACKAGE_PATH=/home/YOUR_PATH/src/:/opt/ros/melodic/share`
+ * *navigation stack* package in melodic version `sudo apt-get install ros-melodic-navigation`
+ * *stage* package in melodic version `sudo apt-get install ros-melodic-stage-ros`
+ * *teb dependency*:  `rosdep install teb_local_planner`
  * a few python dependency like numpy, matplotlib
 
 **Testing_procedures:**
@@ -18,14 +20,14 @@
 
 ![](results/0_0_3_setup.png)
 
-**TODO:** 
+**TODO:**
 1. ~~[Done]Setup env with perfect localization and perception without ros-stage~~
 2. ~~[Done]Visualize the obstacle~~
 3. ~~[Done]Setup configuration accordng to paper experiment setups~~
 4. ~~[Done]Testing script on curvature performance~~
 5. [Done]Single starting position testing setup finished for curvature and time consumption benchmark with man-feed global plan by "Via points"(the blue dots on the graph)
-6. [WIP][To_Be_Decided]Muliple starting position testing, 
-    a. Awaiting integration of global planner (make map, dive deep into code to integrate tf, map_server, costmap2d and global planner) 
+6. [WIP][To_Be_Decided]Muliple starting position testing,
+    a. Awaiting integration of global planner (make map, dive deep into code to integrate tf, map_server, costmap2d and global planner)
     b. Or switching back to ros-stage simulator(resetup the configuration, get rid of noise of perception and localization error, write a script to send start and goal pose, write a script to capture the very first frame of planning trajectory(as ros-stage will drive the car to goal, thus changing the "start" position setups))
 
 **Archived Test Setup:**
