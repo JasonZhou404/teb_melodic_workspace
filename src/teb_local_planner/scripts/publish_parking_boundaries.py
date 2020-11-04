@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# Author: christoph.roesmann@tu-dortmund.de
-
 import rospy
 import math
 from costmap_converter.msg import ObstacleArrayMsg, ObstacleMsg

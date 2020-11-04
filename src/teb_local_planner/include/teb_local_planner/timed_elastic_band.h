@@ -179,7 +179,17 @@ public:
    * @brief Access the last PoseSE2 in the pose sequence (read-only) 
    */
   const PoseSE2& BackPose() const {return pose_vec_.back()->pose();}
+
+  /**
+   * @brief Access the front PoseSE2 in the pose sequence
+   */
+  PoseSE2& FrontPose() {return pose_vec_.front()->pose(); }
   
+  /**
+   * @brief Access the front PoseSE2 in the pose sequence (read-only) 
+   */
+  const PoseSE2& FrontPose() const {return pose_vec_.front()->pose();}
+
   /**
    * @brief Access the last TimeDiff in the time diff sequence
    */ 

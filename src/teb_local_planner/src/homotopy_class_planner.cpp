@@ -317,7 +317,10 @@ void HomotopyClassPlanner::renewAndAnalyzeOldTebs(bool delete_detours)
 
 void HomotopyClassPlanner::updateReferenceTrajectoryViaPoints(bool all_trajectories)
 {
-  if ( (!all_trajectories && !initial_plan_) || !via_points_ || via_points_->empty() || cfg_->optim.weight_viapoint <= 0)
+  // if ( (!all_trajectories && !initial_plan_) || !via_points_ || via_points_->empty() || cfg_->optim.weight_viapoint <= 0)
+  //   return;
+
+  if (!via_points_ || via_points_->empty() || cfg_->optim.weight_viapoint <= 0)
     return;
 
   if(equivalence_classes_.size() < tebs_.size())
@@ -452,11 +455,12 @@ void HomotopyClassPlanner::updateAllTEBs(const PoseSE2* start, const PoseSE2* go
 {
   // If new goal is too far away, clear all existing trajectories to let them reinitialize later.
   // Since all Tebs are sharing the same fixed goal pose, just take the first candidate:
+  // FOR MULTI_STARTING_POINT test setups change from goal check to start check
   if (!tebs_.empty()
-      && ((goal->position() - tebs_.front()->teb().BackPose().position()).norm() >= cfg_->trajectory.force_reinit_new_goal_dist
-        || fabs(g2o::normalize_theta(goal->theta() - tebs_.front()->teb().BackPose().theta())) >= cfg_->trajectory.force_reinit_new_goal_angular))
+      && ((start->position() - tebs_.front()->teb().FrontPose().position()).norm() >= cfg_->trajectory.force_reinit_new_goal_dist
+        || fabs(g2o::normalize_theta(start->theta() - tebs_.front()->teb().FrontPose().theta())) >= cfg_->trajectory.force_reinit_new_goal_angular))
   {
-      ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
+      ROS_INFO("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
       tebs_.clear();
       equivalence_classes_.clear();
   }

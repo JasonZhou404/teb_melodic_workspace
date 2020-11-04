@@ -43,6 +43,7 @@
 #include <interactive_markers/interactive_marker_server.h>
 #include <visualization_msgs/Marker.h>
 #include <teb_local_planner/robot_footprint_model.h>
+#include <teb_local_planner/PoseSeqMsg.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/shared_ptr.hpp>
@@ -62,9 +63,22 @@ boost::shared_ptr<dynamic_reconfigure::Server<TebLocalPlannerReconfigureConfig>>
 ros::Subscriber custom_obst_sub;
 ros::Subscriber via_points_sub;
 ros::Subscriber clicked_points_sub;
-std::vector<ros::Subscriber> obst_vel_subs;
+ros::Subscriber start_end_pose_sub;
 unsigned int no_fixed_obstacles;
 double teb_total_time;
+double start_x;
+double start_y;
+double start_heading;
+double end_x;
+double end_y;
+double end_heading;
+
+// double start_x = -6;
+// double start_y = 2.5;
+// double start_heading = 0.0;
+// double end_x = 2.0;
+// double end_y = -1.25;
+// double end_heading = 0.0;
 
 // =========== Function declarations =============
 void CB_mainCycle(const ros::TimerEvent &e);
@@ -75,6 +89,7 @@ void CB_clicked_points(const geometry_msgs::PointStampedConstPtr &point_msg);
 void CB_via_points(const nav_msgs::Path::ConstPtr &via_points_msg);
 Point2dContainer build_robot_model();
 void set_via_points();
+void CB_start_end_pose(const PoseSeqMsg::ConstPtr &start_end_pose_msg);
 
 // =============== Main function =================
 int main(int argc, char **argv)
@@ -96,11 +111,11 @@ int main(int argc, char **argv)
   // setup callback for custom obstacles
   custom_obst_sub = n.subscribe("obstacles", 1, CB_customObstacle);
 
-  // setup callback for clicked points (in rviz) that are considered as via-points
-  clicked_points_sub = n.subscribe("/clicked_point", 5, CB_clicked_points);
-
   // setup callback for via-points (callback overwrites previously set via-points)
   via_points_sub = n.subscribe("via_points", 1, CB_via_points);
+
+  // setup callback for start and end points
+  start_end_pose_sub = n.subscribe("start_end_pose", 1, CB_start_end_pose);
 
   // Setup manully set Via-points
   set_via_points();
@@ -120,7 +135,6 @@ int main(int argc, char **argv)
   // planner = PlannerInterfacePtr(new TebOptimalPlanner(config, &obst_vector, robot_model, visual, &via_points));
 
   no_fixed_obstacles = obst_vector.size();
-
   ros::spin();
 
   return 0;
@@ -130,7 +144,7 @@ int main(int argc, char **argv)
 void CB_mainCycle(const ros::TimerEvent &e)
 {
   auto start = std::chrono::system_clock::now();
-  planner->plan(PoseSE2(-6, 2.5, 0), PoseSE2(2.0, -1.25, 0)); // hardcoded start and goal for testing purposes
+  planner->plan(PoseSE2(start_x, start_y, start_heading), PoseSE2(end_x, end_y, end_heading));
   std::chrono::duration<double> diff =
       std::chrono::system_clock::now() - start;
   teb_total_time = diff.count() * 1000;
@@ -142,7 +156,6 @@ void CB_publishCycle(const ros::TimerEvent &e)
   planner->visualize();
   visual->publishObstacles(obst_vector);
   visual->publishViaPoints(via_points);
-  std::cout << "TEB total used time: " << teb_total_time << " ms.\n";
   ROS_INFO(("TEB total used time: " + std::to_string(teb_total_time) + " ms.").c_str());
 }
 
@@ -189,16 +202,6 @@ void CB_customObstacle(const costmap_converter::ObstacleArrayMsg::ConstPtr &obst
   }
 }
 
-void CB_clicked_points(const geometry_msgs::PointStampedConstPtr &point_msg)
-{
-  // we assume for simplicity that the fixed frame is already the map/planning frame
-  // consider clicked points as via-points
-  via_points.push_back(Eigen::Vector2d(point_msg->point.x, point_msg->point.y));
-  ROS_INFO_STREAM("Via-point (" << point_msg->point.x << "," << point_msg->point.y << ") added.");
-  if (config.optim.weight_viapoint <= 0)
-    ROS_WARN("Note, via-points are deactivated, since 'weight_via_point' <= 0");
-}
-
 void CB_via_points(const nav_msgs::Path::ConstPtr &via_points_msg)
 {
   ROS_INFO_ONCE("Via-points received. This message is printed once.");
@@ -207,7 +210,6 @@ void CB_via_points(const nav_msgs::Path::ConstPtr &via_points_msg)
   {
     via_points.emplace_back(pose.pose.position.x, pose.pose.position.y);
   }
-  via_points.emplace_back(6.0, 2.5);
 }
 
 Point2dContainer build_robot_model()
@@ -245,4 +247,13 @@ void set_via_points()
   // for starting point at [-6, 2.5, 0]
   via_points.emplace_back(0.0, 1);
   via_points.emplace_back(6.0, 2.0);
+}
+
+void CB_start_end_pose(const PoseSeqMsg::ConstPtr &start_end_pose_msg) {
+  start_x = start_end_pose_msg->pose_seq.at(0).position.x;
+  start_y = start_end_pose_msg->pose_seq.at(0).position.y;
+  start_heading = start_end_pose_msg->pose_seq.at(0).orientation.z;
+  end_x = start_end_pose_msg->pose_seq.at(1).position.x;
+  end_y = start_end_pose_msg->pose_seq.at(1).position.y;
+  end_heading = start_end_pose_msg->pose_seq.at(1).orientation.z;
 }

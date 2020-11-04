@@ -8,6 +8,9 @@
   	<!-- Publish Obstacles-->
   	<node name="publish_parking_boundaries" pkg="teb_local_planner" type="publish_parking_boundaries.py" output="screen" />
 
+  	<!-- Publish start_end_pose-->
+  	<node name="publish_start_end_pose" pkg="teb_local_planner" type="publish_start_end_pose.py" output="screen" />
+
   	<!-- Visualize feedback-->
   	<node name="publish_feedback" pkg="teb_local_planner" type="publish_feedback.py" output="screen" />
 
