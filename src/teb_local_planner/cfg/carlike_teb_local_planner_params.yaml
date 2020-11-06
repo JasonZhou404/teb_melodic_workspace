@@ -14,6 +14,8 @@
  exact_arc_length: False
  feasibility_check_no_poses: 2
  publish_feedback: True
+ force_reinit_new_goal_dist: 0.1
+ force_reinit_new_goal_angular: 0.1
     
  # Robot
          
@@ -73,7 +75,7 @@
  weight_inflation: 0.2
  weight_dynamic_obstacle: 10 # not in use yet
  weight_dynamic_obstacle_inflation: 0.2
- weight_viapoint: 1
+ weight_viapoint: 100
  weight_adapt_factor: 2
 
  # Homotopy Class Planner
