@@ -419,13 +419,15 @@ if ( printErrorWhenNotInitialized() )
 }
 
 void TebVisualization::publishFeedbackMessage(const std::vector< boost::shared_ptr<TebOptimalPlanner> >& teb_planners,
-                                              unsigned int selected_trajectory_idx, const ObstContainer& obstacles)
+                                              unsigned int selected_trajectory_idx, const ObstContainer& obstacles,
+                                              float compuation_time, std::string start_pose_id)
 {
   FeedbackMsg msg;
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = cfg_->map_frame;
   msg.selected_trajectory_idx = selected_trajectory_idx;
-  
+  msg.computation_time = compuation_time;
+  msg.start_pose = start_pose_id;
   
   msg.trajectories.resize(teb_planners.size());
   

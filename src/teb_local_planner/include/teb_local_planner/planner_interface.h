@@ -161,6 +161,10 @@ public:
   {
   }
   
+  virtual void logComputationTime(float compuation_time) {}
+
+  virtual void SetStartPoseId(std::string start_pose_id) {}
+
   virtual void updateRobotModel(RobotFootprintModelPtr robot_model)
   {
   }

@@ -12,4 +12,8 @@ uint16 selected_trajectory_idx
 # List of active obstacles
 costmap_converter/ObstacleArrayMsg obstacles_msg
 
+# Total computation time
+float32 computation_time
 
+# start_pose id
+string start_pose

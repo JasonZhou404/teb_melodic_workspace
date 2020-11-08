@@ -180,7 +180,7 @@ void HomotopyClassPlanner::visualize()
       {
         int best_idx = bestTebIdx();
         if (best_idx>=0)
-          visualization_->publishFeedbackMessage(tebs_, (unsigned int) best_idx, *obstacles_);
+          visualization_->publishFeedbackMessage(tebs_, (unsigned int) best_idx, *obstacles_, compuation_time_, start_pose_id_);
       }
     }
   }

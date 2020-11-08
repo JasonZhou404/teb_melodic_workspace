@@ -9,7 +9,10 @@
   	<node name="publish_parking_boundaries" pkg="teb_local_planner" type="publish_parking_boundaries.py" output="screen" />
 
   	<!-- Publish start_end_pose-->
-  	<node name="publish_start_end_pose" pkg="teb_local_planner" type="publish_start_end_pose.py" output="screen" />
+  	<!-- <node name="publish_start_end_pose" pkg="teb_local_planner" type="publish_start_end_pose.py" output="screen" /> -->
+
+  	<!-- Publish start_end_pose-->
+  	<node name="publish_global_plan" pkg="teb_local_planner" type="publish_global_plan.py" output="screen" />
 
   	<!-- Visualize feedback-->
   	<node name="subscribe_feedback" pkg="teb_local_planner" type="subscribe_feedback.py" output="screen" />

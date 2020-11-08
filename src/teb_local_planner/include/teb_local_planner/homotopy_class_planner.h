@@ -501,6 +501,10 @@ public:
    */
   void randomlyDropTebs();
 
+  void logComputationTime(float compuation_time) {compuation_time_ = compuation_time;};
+
+  void SetStartPoseId(std::string start_pose_id) {start_pose_id_ = start_pose_id;};
+
 protected:
 
   /** @name Explore new paths and keep only a single one for each homotopy class */
@@ -536,8 +540,7 @@ protected:
   void updateReferenceTrajectoryViaPoints(bool all_trajectories);
 
   //@}
-
-
+  
   // external objects (store weak pointers)
   const TebConfig* cfg_; //!< Config class that stores and manages all related parameters
   ObstContainer* obstacles_; //!< Store obstacles that are relevant for planning
@@ -567,7 +570,8 @@ protected:
 
   TebOptimalPlannerPtr last_best_teb_;  //!< Points to the plan used in the previous control cycle
 
-
+  float compuation_time_;
+  std::string start_pose_id_;
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
