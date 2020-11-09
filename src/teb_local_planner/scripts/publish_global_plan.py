@@ -98,7 +98,7 @@ def publish_global_plan_msg(global_plan):
 
 
 if __name__ == '__main__':    
-    global_plan = read_global_plan_from_files(path)
+    global_plan = read_global_plan_from_files(DATA_PATH)
 
     try:
         publish_global_plan_msg(global_plan)

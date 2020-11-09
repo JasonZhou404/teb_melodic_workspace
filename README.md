@@ -22,6 +22,7 @@
 **Current issue is that the subcriber would accidently drop a few msgs, so only 55/64 testings are done. WILL BE FIXED**
 
 Below results is by the config in cfg/carlike_teb_local_planner_params.yaml
+
 ![](results/0_0_4_setup.png)
 
 

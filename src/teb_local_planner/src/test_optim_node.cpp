@@ -61,9 +61,6 @@ ViaPointContainer via_points;
 TebConfig config;
 boost::shared_ptr<dynamic_reconfigure::Server<TebLocalPlannerReconfigureConfig>> dynamic_recfg;
 ros::Subscriber custom_obst_sub;
-ros::Subscriber via_points_sub;
-ros::Subscriber clicked_points_sub;
-ros::Subscriber start_end_pose_sub;
 ros::Subscriber global_plan_sub;
 unsigned int no_fixed_obstacles;
 double teb_total_time;
@@ -74,8 +71,6 @@ double end_x;
 double end_y;
 double end_heading;
 
-bool global_plan_ready = false;
-bool optimization_done = false;
 std::string start_pose_id_ = "";
 int global_plan_count_ = 0;
 
@@ -84,11 +79,7 @@ void CB_mainCycle(const ros::TimerEvent &e);
 void CB_publishCycle(const ros::TimerEvent &e);
 void CB_reconfigure(TebLocalPlannerReconfigureConfig &reconfig, uint32_t level);
 void CB_customObstacle(const costmap_converter::ObstacleArrayMsg::ConstPtr &obst_msg);
-void CB_clicked_points(const geometry_msgs::PointStampedConstPtr &point_msg);
-void CB_via_points(const nav_msgs::Path::ConstPtr &via_points_msg);
 Point2dContainer build_robot_model();
-void set_via_points();
-void CB_start_end_pose(const PoseSeqMsg::ConstPtr &start_end_pose_msg);
 void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg);
 
 // =============== Main function =================
@@ -100,9 +91,6 @@ int main(int argc, char **argv)
   // load ros parameters from node handle
   config.loadRosParamFromNodeHandle(n);
 
-  // ros::Timer cycle_timer = n.createTimer(ros::Duration(1.0), CB_mainCycle);
-  // ros::Timer publish_timer = n.createTimer(ros::Duration(1.0), CB_publishCycle);
-
   // setup dynamic reconfigure
   dynamic_recfg = boost::make_shared<dynamic_reconfigure::Server<TebLocalPlannerReconfigureConfig>>(n);
   dynamic_reconfigure::Server<TebLocalPlannerReconfigureConfig>::CallbackType cb = boost::bind(CB_reconfigure, _1, _2);
@@ -111,17 +99,8 @@ int main(int argc, char **argv)
   // setup callback for custom obstacles
   custom_obst_sub = n.subscribe("obstacles", 1, CB_customObstacle);
 
-  // setup callback for via-points (callback overwrites previously set via-points)
-  // via_points_sub = n.subscribe("via_points", 1, CB_via_points);
-
-  // setup callback for start and end points
-  // start_end_pose_sub = n.subscribe("start_end_pose", 1, CB_start_end_pose);
-
   // setup callback for global plan
   global_plan_sub = n.subscribe("test_global_plan", 0, CB_global_plan, ros::TransportHints().tcpNoDelay(true));
-
-  // Setup manully set Via-points
-  // set_via_points();
 
   // Setup visualization
   visual = TebVisualizationPtr(new TebVisualization(n, config));
@@ -135,48 +114,11 @@ int main(int argc, char **argv)
   else
     planner = PlannerInterfacePtr(new TebOptimalPlanner(config, &obst_vector, robot_model, visual, &via_points));
 
-  // planner = PlannerInterfacePtr(new TebOptimalPlanner(config, &obst_vector, robot_model, visual, &via_points));
-
   no_fixed_obstacles = obst_vector.size();
+
   ros::spin();
 
   return 0;
-}
-
-// Planning loop
-void CB_mainCycle(const ros::TimerEvent &e)
-{
-  if (global_plan_ready)
-  {
-    global_plan_ready = false;
-    auto start = std::chrono::system_clock::now();
-    planner->plan(PoseSE2(start_x, start_y, start_heading), PoseSE2(end_x, end_y, end_heading));
-    std::chrono::duration<double> diff =
-        std::chrono::system_clock::now() - start;
-    teb_total_time = diff.count() * 1000;
-    optimization_done = true;
-
-    planner->visualize();
-    planner->logComputationTime(teb_total_time);
-    planner->SetStartPoseId(start_pose_id_);
-    visual->publishObstacles(obst_vector);
-    visual->publishViaPoints(via_points);
-    ROS_INFO(("TEB total used time: " + std::to_string(teb_total_time) + " ms.").c_str());
-  }
-}
-
-// Visualization loop
-void CB_publishCycle(const ros::TimerEvent &e)
-{
-  if (optimization_done)
-  {
-    planner->visualize();
-    planner->logComputationTime(teb_total_time);
-    visual->publishObstacles(obst_vector);
-    visual->publishViaPoints(via_points);
-    ROS_INFO(("TEB total used time: " + std::to_string(teb_total_time) + " ms.").c_str());
-    optimization_done = false;
-  }
 }
 
 void CB_reconfigure(TebLocalPlannerReconfigureConfig &reconfig, uint32_t level)
@@ -222,15 +164,6 @@ void CB_customObstacle(const costmap_converter::ObstacleArrayMsg::ConstPtr &obst
   }
 }
 
-void CB_via_points(const nav_msgs::Path::ConstPtr &via_points_msg)
-{
-  ROS_INFO_ONCE("Via-points received. This message is printed once.");
-  via_points.clear();
-  for (const geometry_msgs::PoseStamped &pose : via_points_msg->poses)
-  {
-    via_points.emplace_back(pose.pose.position.x, pose.pose.position.y);
-  }
-}
 
 Point2dContainer build_robot_model()
 {
@@ -260,25 +193,6 @@ Point2dContainer build_robot_model()
   return footprint;
 }
 
-void set_via_points()
-{
-  ROS_INFO_ONCE("manually set Via-points. This message is printed once.");
-  via_points.clear();
-  // for starting point at [-6, 2.5, 0]
-  via_points.emplace_back(0.0, 1);
-  via_points.emplace_back(6.0, 2.0);
-}
-
-void CB_start_end_pose(const PoseSeqMsg::ConstPtr &start_end_pose_msg)
-{
-  start_x = start_end_pose_msg->pose_seq.at(0).position.x;
-  start_y = start_end_pose_msg->pose_seq.at(0).position.y;
-  start_heading = start_end_pose_msg->pose_seq.at(0).orientation.z;
-  end_x = start_end_pose_msg->pose_seq.at(1).position.x;
-  end_y = start_end_pose_msg->pose_seq.at(1).position.y;
-  end_heading = start_end_pose_msg->pose_seq.at(1).orientation.z;
-}
-
 void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg)
 {
   int size = global_plan_msg->pose_seq.size();
@@ -299,27 +213,20 @@ void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg)
                             global_plan_msg->pose_seq.at(i).position.y);
   }
 
+  auto start = std::chrono::system_clock::now();
+  planner->plan(PoseSE2(start_x, start_y, start_heading), PoseSE2(end_x, end_y, end_heading));
+  std::chrono::duration<double> diff =
+      std::chrono::system_clock::now() - start;
+  teb_total_time = diff.count() * 1000;
+
   start_pose_id_ = global_plan_msg->start_pose;
+  planner->visualize();
+  planner->logComputationTime(teb_total_time);
+  planner->SetStartPoseId(start_pose_id_);
+  visual->publishObstacles(obst_vector);
+  visual->publishViaPoints(via_points);
 
-  global_plan_ready = true;
-
-  if (global_plan_ready)
-  {
-    global_plan_ready = false;
-    auto start = std::chrono::system_clock::now();
-    planner->plan(PoseSE2(start_x, start_y, start_heading), PoseSE2(end_x, end_y, end_heading));
-    std::chrono::duration<double> diff =
-        std::chrono::system_clock::now() - start;
-    teb_total_time = diff.count() * 1000;
-    optimization_done = true;
-
-    planner->visualize();
-    planner->logComputationTime(teb_total_time);
-    planner->SetStartPoseId(start_pose_id_);
-    ROS_INFO(("start_pose_id_: " + start_pose_id_).c_str());
-    visual->publishObstacles(obst_vector);
-    visual->publishViaPoints(via_points);
-    ROS_INFO(("TEB total used time: " + std::to_string(teb_total_time) + " ms.").c_str());
-  }
+  ROS_INFO(("start_pose_id_: " + start_pose_id_).c_str());
+  ROS_INFO(("TEB total used time: " + std::to_string(teb_total_time) + " ms.").c_str());
   ROS_INFO(("global_plan_count: " + std::to_string(global_plan_count_++)).c_str());
 }
