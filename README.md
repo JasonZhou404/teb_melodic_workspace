@@ -27,6 +27,12 @@ Below results is by the config in cfg/carlike_teb_local_planner_params.yaml exce
 ![](results/0_0_4.dt_0.5_result.png)
 
 
+**Parameter Tuning**
+
+```
+rosrun rqt_reconfigure rqt_reconfigiture
+```
+
 **TODO:**
 1. ~~[Done]Setup env with perfect localization and perception without ros-stage~~
 2. ~~[Done]Visualize the obstacle~~
