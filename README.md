@@ -18,9 +18,13 @@
 6. when you see "all global plan published" shown in your terminal. Ctrl-C to stop the terminal. And statistics will be automaticaly dumped at RESULTS_TABLE_CSV. Read it in csv reader is recommended.
 7. If you want to change or update the data in DATA_PATH, please update line 27-28 in scripts/publish_global_plan.py accordingly
 
-Below results is by the config in cfg/carlike_teb_local_planner_params.yaml
+Below results is by the config in cfg/carlike_teb_local_planner_params.yaml except a few different confs mentioned in the image
 
-![](results/0_0_4_setup.png)
+![](results/0_0_4.dt_0.1_result.png)
+![](results/0_0_4.dt_0.2_result.png)
+![](results/0_0_4.dt_0.3_result.png)
+![](results/0_0_4.dt_0.4_result.png)
+![](results/0_0_4.dt_0.5_result.png)
 
 
 **TODO:**
@@ -33,7 +37,8 @@ Below results is by the config in cfg/carlike_teb_local_planner_params.yaml
     a. Awaiting integration of global planner (make map, dive deep into code to integrate tf, map_server, costmap2d and global planner)
     b. Or switching back to ros-stage simulator(resetup the configuration, get rid of noise of perception and localization error, write a script to send start and goal pose, write a script to capture the very first frame of planning trajectory(as ros-stage will drive the car to goal, thus changing the "start" position setups))~~
 7. ~~[Done]Fix global planning subsriber missing messages~~
-8. Conducting tests on different dt[0.1, 0.2, 0.3, 0.4, 0.5] with fined tuned parameters
+8. ~~[Done]Conducting tests on different dt[0.1, 0.2, 0.3, 0.4, 0.5] with fined tuned parameters~~
+9. Aligning testing setups with other optimizers
 
 **Archived Test Setup:**
 1. With ros-state simulation env run "roslaunch teb_local_planner_testing robot_carlike_in_stage.launch", and here we go (Clearly, Teb is doing crazy here because the inaccurate and jumpping localization and perception)

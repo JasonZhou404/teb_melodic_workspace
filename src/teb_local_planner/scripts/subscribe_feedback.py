@@ -163,7 +163,7 @@ def feedback_subscriber():
         last_start_pose_id = cur_start_pose_id
 
         print(cur_start_pose_id + " is received")
-        
+
         t = []
         v = []
         omega = []
@@ -218,7 +218,9 @@ def feedback_subscriber():
 
         curvature_invalid_table.append(False)
         for kappa in curvature:
-            if instant_curvature != "NAN" and abs(kappa) > 0.2:
+            # 0.21 is used as a buffer to 0.2
+            if kappa != "NAN" and abs(kappa) > 0.21:
+                print(kappa)
                 curvature_invalid_table[-1] = True
                 break
         r.sleep()

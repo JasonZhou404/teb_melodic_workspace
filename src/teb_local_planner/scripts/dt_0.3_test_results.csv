@@ -1,0 +1,63 @@
+setups in difference:
+dt_ref: 0.3
+dt_hysteresis: 0.2
+max_samples: 500
+rospy.Rate(0.5) # Hz at line 67 of scripts/publish_global_plan.py
+
+start_pose_id,average time is 924.45895249503,collision rate is 0.5714285714285714,curvature invalid rate is 0.5178571428571429,success rate is 0.30357142857142855
+x_-8.0_y_2.5,381.1899108886719,False,False,True
+x_-8.0_y_3.0,1091.8956298828125,True,False,False
+x_-8.0_y_3.5,837.9193115234375,True,True,False
+x_-7.0_y_2.0,180.0655059814453,False,False,True
+x_-7.0_y_2.5,972.6260375976562,True,True,False
+x_-7.0_y_3.0,1983.260986328125,False,False,True
+x_-7.0_y_3.5,614.5128784179688,False,True,False
+x_-6.0_y_2.5,887.868408203125,False,False,True
+x_-6.0_y_3.0,887.868408203125,False,False,True
+x_-6.0_y_3.5,1039.6827392578125,True,True,False
+x_-5.0_y_2.5,2700.127197265625,True,True,False
+x_-5.0_y_3.0,648.1072998046875,True,True,False
+x_-5.0_y_3.5,648.1072998046875,True,False,False
+x_-4.0_y_2.0,825.1774291992188,False,False,True
+x_-4.0_y_2.5,731.4890747070312,False,False,True
+x_-4.0_y_3.0,1006.151611328125,False,False,True
+x_-4.0_y_3.5,840.7899780273438,False,False,True
+x_-3.0_y_2.0,662.883544921875,False,False,True
+x_-3.0_y_2.5,2173.218017578125,False,True,False
+x_-3.0_y_3.0,898.1127319335938,True,False,False
+x_-3.0_y_3.5,898.1127319335938,True,True,False
+x_-2.0_y_2.0,74.568603515625,True,True,False
+x_-2.0_y_2.5,470.0052185058594,False,False,True
+x_-2.0_y_3.0,722.4996948242188,True,True,False
+x_-2.0_y_3.5,292.6900939941406,False,False,True
+x_-1.0_y_2.0,730.291259765625,True,True,False
+x_-1.0_y_2.5,376.8260803222656,False,False,True
+x_-1.0_y_3.0,699.44140625,True,False,False
+x_-1.0_y_3.5,620.4996337890625,True,False,False
+x_0.0_y_2.0,2234.560791015625,True,True,False
+x_0.0_y_2.5,2234.560791015625,True,True,False
+x_0.0_y_3.0,575.9767456054688,False,True,False
+x_0.0_y_3.5,586.2122192382812,True,True,False
+x_1.0_y_2.0,2578.0048828125,True,True,False
+x_1.0_y_2.5,1578.05322265625,True,True,False
+x_1.0_y_3.0,284.5831298828125,True,True,False
+x_2.0_y_2.0,284.5831298828125,True,False,False
+x_2.0_y_2.5,721.3994750976562,True,True,False
+x_2.0_y_3.5,1965.731201171875,True,True,False
+x_3.0_y_3.0,1729.644287109375,False,True,False
+x_4.0_y_2.0,721.1229858398438,False,False,True
+x_4.0_y_2.5,721.1229858398438,False,True,False
+x_4.0_y_3.0,381.4952087402344,False,True,False
+x_4.0_y_3.5,322.7744140625,False,True,False
+x_5.0_y_2.0,328.36810302734375,False,False,True
+x_5.0_y_2.5,2045.729248046875,True,True,False
+x_5.0_y_3.0,2045.729248046875,True,False,False
+x_5.0_y_3.5,440.5943908691406,False,False,True
+x_6.0_y_2.0,556.2874145507812,True,False,False
+x_6.0_y_2.5,2088.260498046875,True,True,False
+x_6.0_y_3.0,545.667724609375,True,False,False
+x_6.0_y_3.5,545.667724609375,True,True,False
+x_7.0_y_2.0,227.27777099609375,True,False,False
+x_7.0_y_2.5,322.07794189453125,True,True,False
+x_7.0_y_3.0,480.3845520019531,True,True,False
+x_7.0_y_3.5,327.842529296875,False,False,True
