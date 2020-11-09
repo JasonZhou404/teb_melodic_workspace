@@ -6,6 +6,8 @@
  * Add current folder into ros package folder. `export ROS_PACKAGE_PATH=/home/YOUR_PATH/src/:/opt/ros/melodic/share`
  * *navigation stack* package in melodic version `sudo apt-get install ros-melodic-navigation`
  * *stage* package in melodic version `sudo apt-get install ros-melodic-stage-ros`
+ * Install teb local planner `sudo apt-get install ros-melodic-teb-local-planner`
+ * Run `source /opt/ros/melodic/setup.bash`
  * *teb dependency*:  `rosdep install teb_local_planner`
  * a few python dependency like numpy, matplotlib
 
