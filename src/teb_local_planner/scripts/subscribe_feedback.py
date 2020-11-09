@@ -151,7 +151,7 @@ def feedback_subscriber():
 
     upper_boundaries, lower_boundaries = create_parking_boundaries()
 
-    r = rospy.Rate(2)  # define rate here
+    r = rospy.Rate(10)  # define rate here
     last_start_pose_id = None
     while not rospy.is_shutdown():
 
@@ -162,6 +162,8 @@ def feedback_subscriber():
             continue
         last_start_pose_id = cur_start_pose_id
 
+        print(cur_start_pose_id + " is received")
+        
         t = []
         v = []
         omega = []

@@ -100,7 +100,7 @@ int main(int argc, char **argv)
   custom_obst_sub = n.subscribe("obstacles", 1, CB_customObstacle);
 
   // setup callback for global plan
-  global_plan_sub = n.subscribe("test_global_plan", 0, CB_global_plan, ros::TransportHints().tcpNoDelay(true));
+  global_plan_sub = n.subscribe("test_global_plan", 1, CB_global_plan, ros::TransportHints().reliable ().tcpNoDelay(true));
 
   // Setup visualization
   visual = TebVisualizationPtr(new TebVisualization(n, config));
@@ -196,7 +196,9 @@ Point2dContainer build_robot_model()
 void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg)
 {
   int size = global_plan_msg->pose_seq.size();
+  ROS_INFO(("Received start_pose_id_: " + global_plan_msg->start_pose).c_str());
   if (size == 0) {
+    ROS_INFO(("Received start_pose_id_: " + global_plan_msg->start_pose + " has global plan empty").c_str());
     return;
   }
   start_x = global_plan_msg->pose_seq.at(0).position.x;
@@ -226,7 +228,7 @@ void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg)
   visual->publishObstacles(obst_vector);
   visual->publishViaPoints(via_points);
 
-  ROS_INFO(("start_pose_id_: " + start_pose_id_).c_str());
+  ROS_INFO(("Finished plan at start_pose_id_: " + start_pose_id_).c_str());
   ROS_INFO(("TEB total used time: " + std::to_string(teb_total_time) + " ms.").c_str());
   ROS_INFO(("global_plan_count: " + std::to_string(global_plan_count_++)).c_str());
 }
