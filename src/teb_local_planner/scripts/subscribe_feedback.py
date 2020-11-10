@@ -6,6 +6,7 @@
 import csv
 import rospy
 import math
+import os
 from teb_local_planner.msg import FeedbackMsg, TrajectoryMsg, TrajectoryPointMsg
 from geometry_msgs.msg import PolygonStamped, Point32
 import numpy as np
@@ -16,8 +17,10 @@ MKZ_FRONT_EDGE_TO_CENTER = 3.89
 MKZ_BACK_EDGE_TO_CENTER = 1.043
 MKZ_WIDTH = 2.11
 
-RESULTS_TABLE_CSV = '/home/jinyun/dev/teb_melodic_workspace/src/teb_local_planner/scripts/test_results.csv'
+RESULTS_TABLE_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                '../scripts/test_results.csv'))
 
+print("RESULTS_TABLE_CSV are: " + RESULTS_TABLE_CSV)
 
 def create_off_centered_box(rear_x, rear_y, heading, width=MKZ_WIDTH,
                             front_edge_to_center=MKZ_FRONT_EDGE_TO_CENTER,

@@ -40,7 +40,7 @@ def publish_obstacle_msg():
     v6.x = 17
     v6.y = -10
     v7 = Point32()
-    v7.x = -10
+    v7.x = -12
     v7.y = -10
     obstacle_msg.obstacles[0].polygon.points = [v0, v1, v2, v3, v4, v5, v6, v7]
 
