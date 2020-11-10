@@ -12,8 +12,10 @@
 **Testing_procedures:**
 1. run "catkin_make" in this folder
 2. run "source /opt/ros/melodic/setup.bash" and "source devel/setup.bash" in every terminal used, better have it in your bashrc
-3. adapt "DATA_PATH" at line 11 in scripts/publish_global_plan.py to your own absolute path
-4. adapt "RESULTS_TABLE_CSV" at line 19 in scripts/subsribe_feedback.py to your own absolute path
+3. ~~adapt "DATA_PATH" at line 11 in scripts/publish_global_plan.py to your own absolute path~~
+4. ~~adapt "RESULTS_TABLE_CSV" at line 19 in scripts/subsribe_feedback.py to your own absolute path~~
+3. please upload your global plan results to under `global_planner/data/hybrid_star_results`
+4. expected results saved in `teb_local_planner/scripts/test_results.csv`
 5. run "roslaunch teb_local_planner test_optim_node.launch"
 6. when you see "all global plan published" shown in your terminal. Ctrl-C to stop the terminal. And statistics will be automaticaly dumped at RESULTS_TABLE_CSV. Read it in csv reader is recommended.
 7. If you want to change or update the data in DATA_PATH, please update line 27-28 in scripts/publish_global_plan.py accordingly
@@ -26,6 +28,12 @@ Below results is by the config in cfg/carlike_teb_local_planner_params.yaml exce
 ![](results/0_0_4.dt_0.4_result.png)
 ![](results/0_0_4.dt_0.5_result.png)
 
+
+**Parameter Tuning**
+
+```
+rosrun rqt_reconfigure rqt_reconfigiture
+```
 
 **TODO:**
 1. ~~[Done]Setup env with perfect localization and perception without ros-stage~~

@@ -8,7 +8,12 @@ import time
 from teb_local_planner.msg import PoseSeqMsg
 from geometry_msgs.msg import Pose
 
-DATA_PATH = '/home/jinyun/dev/teb_melodic_workspace/src/global_planner/data/hybrid_star_results/'
+
+# init vars
+DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                '../../global_planner/data/hybrid_star_results'))
+
+print("DATA_PATH are: " + DATA_PATH)
 
 
 def list_files_with_suffix(dir_path, suffix):
@@ -75,7 +80,7 @@ def publish_global_plan_msg(global_plan):
     while not rospy.is_shutdown():
         if global_plan_idx >= len(global_plan):
             print('all global plan published')
-            # It's a hack here to republish the last global plan msg, as sometimes, the last plan feedback is 
+            # It's a hack here to republish the last global plan msg, as sometimes, the last plan feedback is
             # somehow dropped
             global_plan_idx = len(global_plan) - 1
 
