@@ -2,6 +2,7 @@
 
 import os
 import rospy
+import numpy
 import csv
 import sys
 import time
@@ -29,8 +30,8 @@ def read_global_plan_from_files(folder):
     heading_files = list(filter(lambda path: 'phi.txt' in path, files))
 
     global_plan = {}
-    for x in range(-8, 8):
-        for y in [2, 2.5, 3, 3.5]:
+    for x in np.arange(-10, 10):
+        for y in np.arange(2, 4, 0.5):
             x_file = list(filter(lambda path: "start_x_{:.1f}".format(
                 x) in path and "start_y_{:.1f}".format(y) in path, x_files))[0]
             y_file = list(filter(lambda path: "start_x_{:.1f}".format(
