@@ -12,7 +12,7 @@ from geometry_msgs.msg import Pose
 
 # init vars
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                '../../global_planner/data/hybrid_astar_results'))
+                                         '../../global_planner/data/hybrid_astar_results_stepsize=0.5'))
 
 print("DATA_PATH are: " + DATA_PATH)
 

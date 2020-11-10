@@ -49,10 +49,10 @@ def publish_obstacle_msg():
     obstacle_msg.obstacles[1].id = 1
     v0 = Point32()
     v0.x = 17.0
-    v0.y = 5.0
+    v0.y = 5.6
     v1 = Point32()
     v1.x = -12.0
-    v1.y = 5.0
+    v1.y = 5.6
     v2 = Point32()
     v2.x = -12.0
     v2.y = 10.0
