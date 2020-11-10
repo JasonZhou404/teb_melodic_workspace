@@ -19,7 +19,7 @@ def publish_obstacle_msg():
     obstacle_msg.obstacles.append(ObstacleMsg())
     obstacle_msg.obstacles[0].id = 0
     v0 = Point32()
-    v0.x = -10.0
+    v0.x = -12.0
     v0.y = 0.0
     v1 = Point32()
     v1.x = 0.0
@@ -28,10 +28,10 @@ def publish_obstacle_msg():
     v2.x = 0.0
     v2.y = -2.5
     v3 = Point32()
-    v3.x = 7
+    v3.x = 7.5
     v3.y = -2.5
     v4 = Point32()
-    v4.x = 7
+    v4.x = 7.5
     v4.y = 0
     v5 = Point32()
     v5.x = 17
@@ -51,10 +51,10 @@ def publish_obstacle_msg():
     v0.x = 17.0
     v0.y = 5.0
     v1 = Point32()
-    v1.x = -10.0
+    v1.x = -12.0
     v1.y = 5.0
     v2 = Point32()
-    v2.x = -10.0
+    v2.x = -12.0
     v2.y = 10.0
     v3 = Point32()
     v3.x = 17.0
