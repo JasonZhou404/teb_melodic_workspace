@@ -45,9 +45,9 @@ def create_off_centered_box(rear_x, rear_y, heading, width=MKZ_WIDTH,
 
 
 def create_parking_boundaries():
-    upper_boundaries = Polygon([[17, 5], [-10, 5], [-10, 10], [17, 10]])
+    upper_boundaries = Polygon([[17, 5], [-12, 5], [-12, 10], [17, 10]])
     lower_boundaries = Polygon(
-        [[-10, 0], [0, 0], [0, -2.5], [7, -2.5], [7, 0], [17, 0], [17, -10], [-10, -10]])
+        [[-12, 0], [0, 0], [0, -2.5], [7.5, -2.5], [7.5, 0], [17, 0], [17, -10], [-12, -10]])
     return upper_boundaries, lower_boundaries
 
 
