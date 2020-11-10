@@ -2,7 +2,7 @@
 
 import os
 import rospy
-import numpy
+import numpy as np
 import csv
 import sys
 import time
@@ -12,7 +12,7 @@ from geometry_msgs.msg import Pose
 
 # init vars
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                '../../global_planner/data/hybrid_star_results'))
+                                                '../../global_planner/data/hybrid_astar_results'))
 
 print("DATA_PATH are: " + DATA_PATH)
 
@@ -30,7 +30,7 @@ def read_global_plan_from_files(folder):
     heading_files = list(filter(lambda path: 'phi.txt' in path, files))
 
     global_plan = {}
-    for x in np.arange(-10, 10):
+    for x in np.arange(-10, 10, 1.0):
         for y in np.arange(2, 4, 0.5):
             x_file = list(filter(lambda path: "start_x_{:.1f}".format(
                 x) in path and "start_y_{:.1f}".format(y) in path, x_files))[0]
