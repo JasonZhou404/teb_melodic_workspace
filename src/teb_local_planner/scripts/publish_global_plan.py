@@ -75,7 +75,7 @@ def publish_global_plan_msg(global_plan):
     while not rospy.is_shutdown():
         if global_plan_idx >= len(global_plan):
             print('all global plan published')
-            # It's a hack here to republish the last global plan msg, as sometimes, the last plan feedback is 
+            # It's a hack here to republish the last global plan msg, as sometimes, the last plan feedback is
             # somehow dropped
             global_plan_idx = len(global_plan) - 1
 
