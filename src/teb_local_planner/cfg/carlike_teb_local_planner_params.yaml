@@ -110,3 +110,7 @@
  oscillation_omega_eps: 0.1
  oscillation_recovery_min_duration: 10
  oscillation_filter_duration: 10
+
+
+#  lon_jerk_bound = 1.0
+#     lat_jerk_bound = 2.0
