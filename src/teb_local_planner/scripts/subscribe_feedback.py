@@ -18,9 +18,10 @@ MKZ_BACK_EDGE_TO_CENTER = 1.043
 MKZ_WIDTH = 2.11
 
 RESULTS_TABLE_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                '../scripts/test_results.csv'))
+                                                 '../scripts/test_results.csv'))
 
 print("RESULTS_TABLE_CSV are: " + RESULTS_TABLE_CSV)
+
 
 def create_off_centered_box(rear_x, rear_y, heading, width=MKZ_WIDTH,
                             front_edge_to_center=MKZ_FRONT_EDGE_TO_CENTER,
@@ -45,7 +46,7 @@ def create_off_centered_box(rear_x, rear_y, heading, width=MKZ_WIDTH,
 
 
 def create_parking_boundaries():
-    upper_boundaries = Polygon([[17, 5], [-12, 5], [-12, 10], [17, 10]])
+    upper_boundaries = Polygon([[17, 5.6], [-12, 5.6], [-12, 10], [17, 10]])
     lower_boundaries = Polygon(
         [[-12, 0], [0, 0], [0, -2.5], [7.5, -2.5], [7.5, 0], [17, 0], [17, -10], [-12, -10]])
     return upper_boundaries, lower_boundaries
@@ -110,12 +111,14 @@ def dump_statistics():
     with open(RESULTS_TABLE_CSV, 'w') as csvfile:
         csv.writer(csvfile).writerow(['start_pose_id',
                                       'average time is {}'.format(
-                                          sum(timing_table)/len(timing_table)),
+                                          sum(timing_table) / len(timing_table)),
+                                      f'max time is {max(timing_table)}',
+                                      f'min time is {min(timing_table)}'
                                       'collision rate is {}'.format(
-                                          sum(collision_table)/len(collision_table)),
+                                          sum(collision_table) / len(collision_table)),
                                       'curvature invalid rate is {}'.format(
-                                          sum(curvature_invalid_table)/len(curvature_invalid_table)),
-                                      'success rate is {}'.format(sum(success_table)/len(success_table))])
+                                          sum(curvature_invalid_table) / len(curvature_invalid_table)),
+                                      'success rate is {}'.format(sum(success_table) / len(success_table))])
         for i in range(len(timing_table)):
             csv.writer(csvfile).writerow(
                 [start_pose_id_table[i],
@@ -192,8 +195,8 @@ def feedback_subscriber():
 
         for i in range(len(curvature)):
             if curvature[i] == "NAN":
-                curvature[i] = curvature[i+1] if i + \
-                    1 < len(curvature) else curvature[i-1]
+                curvature[i] = curvature[i + 1] if i + \
+                    1 < len(curvature) else curvature[i - 1]
 
         plot_velocity_profile(fig, ax_v, np.asarray(
             t), np.asarray(v))
