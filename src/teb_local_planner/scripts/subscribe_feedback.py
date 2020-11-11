@@ -18,7 +18,7 @@ MKZ_BACK_EDGE_TO_CENTER = 1.043
 MKZ_WIDTH = 2.11
 
 RESULTS_TABLE_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                 '../scripts/test_results_0.4.csv'))
+                                                 '../scripts/test_results_0.5.csv'))
 
 print("RESULTS_TABLE_CSV are: " + RESULTS_TABLE_CSV)
 
@@ -112,6 +112,8 @@ def dump_statistics():
         csv.writer(csvfile).writerow(['start_pose_id',
                                       'average time is {}'.format(
                                           sum(timing_table) / len(timing_table)),
+                                      f'max time is {max(timing_table)}',
+                                      f'min time is {min(timing_table)}'
                                       'collision rate is {}'.format(
                                           sum(collision_table) / len(collision_table)),
                                       'curvature invalid rate is {}'.format(
