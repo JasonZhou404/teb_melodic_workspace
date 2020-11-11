@@ -18,7 +18,7 @@ MKZ_BACK_EDGE_TO_CENTER = 1.043
 MKZ_WIDTH = 2.11
 
 RESULTS_TABLE_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                 '../scripts/test_results_0.5.csv'))
+                                                 '../scripts/test_results.csv'))
 
 print("RESULTS_TABLE_CSV are: " + RESULTS_TABLE_CSV)
 
