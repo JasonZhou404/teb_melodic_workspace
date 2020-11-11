@@ -208,7 +208,8 @@ def feedback_subscriber():
         for point in trajectory:
             t.append(point.time_from_start.to_sec())
             v.append(point.velocity.linear.x)
-            a.append(point.acceleration.linear.x)
+            if len(v) >= 2:
+                a.append(v[-1] - v[-2] / t[-1])
             omega.append(point.velocity.angular.z)
             if abs(v[-1]) < 0.1:
                 instant_curvature = "NAN"
@@ -231,6 +232,7 @@ def feedback_subscriber():
 
         if time is not None:
             timing_table.append(time)
+            start_pose_id_table.append(cur_start_pose_id)
 
         collision_table.append(False)
         for i in range(len(trajectory)):
@@ -245,10 +247,13 @@ def feedback_subscriber():
             if ego_box.intersects(upper_boundaries) or ego_box.intersects(lower_boundaries):
                 collision_table[-1] = True
                 break
-            if i != 0:
+            if i != 0 and i < len(trajectory) - 1:
+                # note: len(a) = len(trajectory)-1
                 # jerk
                 jerk.append((a[i] - a[i - 1]) / t[i])
                 # lat jerk
+                if curvature[i] == "NAN" or curvature[i - 1] == "NAN":
+                    break
                 lat_acc_i = v[i] ** 2 * curvature[i]
                 lat_acc_i_minus_1 = v[i - 1] ** 2 * curvature[i - 1]
                 lat_jerk.append((lat_acc_i - lat_acc_i_minus_1) / t[i])
@@ -261,9 +266,11 @@ def feedback_subscriber():
         for kappa in curvature:
             # 0.21 is used as a buffer to 0.2
             if kappa != "NAN" and abs(kappa) > 0.21:
-                print(kappa)
+                print(f'current kappa is {kappa}')
                 curvature_invalid_table[-1] = True
                 break
+        if len(lon_jerk) < 1 or len(lat_jerk) < 1:
+            continue
         lon_jerk_abs = [abs(elem) for elem in lon_jerk]
         max_lon_jerk_table.append(max(lon_jerk_abs))
         mean_lon_jerk_table.append(sum(lon_jerk_abs) / len(lon_jerk_abs))
