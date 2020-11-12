@@ -428,6 +428,7 @@ void TebVisualization::publishFeedbackMessage(const std::vector< boost::shared_p
   msg.selected_trajectory_idx = selected_trajectory_idx;
   msg.computation_time = compuation_time;
   msg.start_pose = start_pose_id;
+  msg.dt_ref = cfg_->trajectory.dt_ref;
   
   msg.trajectories.resize(teb_planners.size());
   
