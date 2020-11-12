@@ -16,11 +16,7 @@ from shapely.geometry import Polygon, LineString, Point
 MKZ_FRONT_EDGE_TO_CENTER = 3.89
 MKZ_BACK_EDGE_TO_CENTER = 1.043
 MKZ_WIDTH = 2.11
-
-RESULTS_TABLE_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                 '../scripts/test_results.csv'))
-
-print("RESULTS_TABLE_CSV are: " + RESULTS_TABLE_CSV)
+PLATFORM_DIR = os.path.dirname(__file__)
 
 
 def create_off_centered_box(rear_x, rear_y, heading, width=MKZ_WIDTH,
@@ -71,6 +67,7 @@ def feedback_callback(data):
     global trajectory
     global time
     global cur_start_pose_id
+    global result_table_csv
     if not data.trajectories:  # empty
         trajectory = []
         time = None
@@ -78,6 +75,10 @@ def feedback_callback(data):
     trajectory = data.trajectories[data.selected_trajectory_idx].trajectory
     time = data.computation_time
     cur_start_pose_id = data.start_pose
+    result_table_csv = os.path.abspath(
+        os.path.join(PLATFORM_DIR,
+                     f'../scripts/test_results_{data.dt_ref}.csv'))
+    print("RESULTS_TABLE_CSV are: " + result_table_csv)
 
 
 def plot_velocity_profile(fig, ax_v, t, v):
@@ -109,7 +110,7 @@ def dump_statistics():
 
     success_table = [not a and not b for a, b in zip(
         collision_table, curvature_invalid_table)]
-    with open(RESULTS_TABLE_CSV, 'w') as csvfile:
+    with open(result_table_csv, 'w') as csvfile:
         csv.writer(csvfile).writerow(['start_pose_id',
                                       'average time is {}'.format(
                                           sum(timing_table) / len(timing_table)),
@@ -137,10 +138,6 @@ def dump_statistics():
                  success_table[i]])
 
 
-def calc_vehicle_acc(ax, ay, heading):
-    return ax * math.cos(heading) + ay * math.sin(heading)
-
-
 def feedback_subscriber():
     global trajectory
     global timing_table
@@ -163,6 +160,7 @@ def feedback_subscriber():
     topic_name = rospy.get_param('~feedback_topic', topic_name)
     rospy.Subscriber(topic_name, FeedbackMsg, feedback_callback,
                      queue_size=10)  # define feedback topic here!
+    # print("RESULTS_TABLE_CSV are: " + result_table_csv)
 
     rospy.loginfo(
         "Feedback published on '%s'.", topic_name)
@@ -275,13 +273,13 @@ def feedback_subscriber():
         max_lon_jerk_table.append(max(lon_jerk_abs))
         mean_lon_jerk_table.append(sum(lon_jerk_abs) / len(lon_jerk_abs))
         hit_bound_lon_jerk_table.append(
-            sum([1.0 for elem in lon_jerk_abs if elem >= lon_jerk_bound]))
+            sum([1.0 for elem in lon_jerk_abs if elem > lon_jerk_bound]) / len(lon_jerk_abs))
 
         lat_jerk_abs = [abs(elem) for elem in lat_jerk]
         max_lat_jerk_table.append(max(lat_jerk_abs))
         mean_lat_jerk_table.append(sum(lat_jerk_abs) / len(lat_jerk_abs))
         hit_bound_lat_jerk_table.append(
-            sum([1.0 for elem in lat_jerk_abs if elem >= lat_jerk_bound]))
+            sum([1.0 for elem in lat_jerk_abs if elem > lat_jerk_bound]) / len(lat_jerk_abs))
         r.sleep()
 
 
