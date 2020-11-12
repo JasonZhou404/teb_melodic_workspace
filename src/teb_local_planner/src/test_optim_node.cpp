@@ -40,6 +40,7 @@
 
 #include <ros/ros.h>
 #include <tf2_eigen/tf2_eigen.h>
+#include <tf/transform_datatypes.h>
 #include <interactive_markers/interactive_marker_server.h>
 #include <visualization_msgs/Marker.h>
 #include <teb_local_planner/robot_footprint_model.h>
@@ -201,12 +202,6 @@ void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg)
     ROS_INFO(("Received start_pose_id_: " + global_plan_msg->start_pose + " has global plan empty").c_str());
     return;
   }
-  start_x = global_plan_msg->pose_seq.at(0).position.x;
-  start_y = global_plan_msg->pose_seq.at(0).position.y;
-  start_heading = global_plan_msg->pose_seq.at(0).orientation.z;
-  end_x = global_plan_msg->pose_seq.at(size - 1).position.x;
-  end_y = global_plan_msg->pose_seq.at(size - 1).position.y;
-  end_heading = global_plan_msg->pose_seq.at(size - 1).orientation.z;
 
   via_points.clear();
   for (int i = 0; i < size; ++i)
@@ -214,9 +209,36 @@ void CB_global_plan(const PoseSeqMsg::ConstPtr &global_plan_msg)
     via_points.emplace_back(global_plan_msg->pose_seq.at(i).position.x,
                             global_plan_msg->pose_seq.at(i).position.y);
   }
+  // Only feed start and end pose: Lower success rate
+  // start_x = global_plan_msg->pose_seq.at(0).position.x;
+  // start_y = global_plan_msg->pose_seq.at(0).position.y;
+  // start_heading = global_plan_msg->pose_seq.at(0).orientation.z;
+  // end_x = global_plan_msg->pose_seq.at(size - 1).position.x;
+  // end_y = global_plan_msg->pose_seq.at(size - 1).position.y;
+  // end_heading = global_plan_msg->pose_seq.at(size - 1).orientation.z;
+
+  // auto start = std::chrono::system_clock::now();
+  // planner->plan(PoseSE2(start_x, start_y, start_heading), PoseSE2(end_x, end_y, end_heading));
+  // std::chrono::duration<double> diff =
+  //     std::chrono::system_clock::now() - start;
+  // teb_total_time = diff.count() * 1000;
+
+  std::vector<geometry_msgs::PoseStamped> initials;
+  for (int i = 0; i < size; ++i)
+  { 
+    auto current_x = global_plan_msg->pose_seq.at(i).position.x; 
+    auto current_y = global_plan_msg->pose_seq.at(i).position.y; 
+    auto current_theta = global_plan_msg->pose_seq.at(i).orientation.z;
+
+    geometry_msgs::PoseStamped current_pose_stamped;
+    current_pose_stamped.pose.position.x = current_x;
+    current_pose_stamped.pose.position.y = current_y;
+    current_pose_stamped.pose.orientation = tf::createQuaternionMsgFromYaw(current_theta);
+    initials.push_back(std::move(current_pose_stamped));
+  }
 
   auto start = std::chrono::system_clock::now();
-  planner->plan(PoseSE2(start_x, start_y, start_heading), PoseSE2(end_x, end_y, end_heading));
+  planner->plan(initials);
   std::chrono::duration<double> diff =
       std::chrono::system_clock::now() - start;
   teb_total_time = diff.count() * 1000;

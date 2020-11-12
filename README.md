@@ -24,12 +24,42 @@
 
 Below results is by the config in cfg/carlike_teb_local_planner_params.yaml except a few different confs mentioned in the image
 
-![](results/0_0_4.dt_0.1_result.png)
-![](results/0_0_4.dt_0.2_result.png)
-![](results/0_0_4.dt_0.3_result.png)
-![](results/0_0_4.dt_0.4_result.png)
-![](results/0_0_4.dt_0.5_result.png)
+Testsetups for different timestep t should be
 
+dt=0.1: 
+
+    dt_ref: 0.1
+    dt_hysteresis: 0.07
+    max_samples: 2000
+    rospy.Rate(0.2) # Hz at line 67 of scripts/publish_global_plan.py
+
+dt=0.2:
+
+    dt_ref: 0.2
+    dt_hysteresis: 0.15
+    max_samples: 1500
+    rospy.Rate(0.2) # Hz at line 67 of scripts/publish_global_plan.py
+
+dt=0.3:
+
+    dt_ref: 0.3
+    dt_hysteresis: 0.2
+    max_samples: 500
+    rospy.Rate(0.5) # Hz at line 67 of scripts/publish_global_plan.py
+
+dt=0.4:
+
+    dt_ref: 0.4
+    dt_hysteresis: 0.3
+    max_samples: 500
+    rospy.Rate(0.5) # Hz at line 67 of scripts/publish_global_plan.py
+
+dt=0.5:
+
+    dt_ref: 0.5
+    dt_hysteresis: 0.4
+    max_samples: 500
+    rospy.Rate(0.5) # Hz at line 67 of scripts/publish_global_plan.py
 
 **Parameter Tuning**
 
