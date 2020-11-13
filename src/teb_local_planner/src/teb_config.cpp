@@ -182,7 +182,7 @@ void TebConfig::reconfigure(TebLocalPlannerReconfigureConfig& cfg)
   // Trajectory
   trajectory.teb_autosize = cfg.teb_autosize;
   trajectory.dt_ref = cfg.dt_ref;
-  trajectory.dt_hysteresis = cfg.dt_hysteresis;
+  trajectory.dt_hysteresis = cfg.dt_ref/2.0; // cfg.dt_hysteresis
   trajectory.global_plan_overwrite_orientation = cfg.global_plan_overwrite_orientation;
   trajectory.allow_init_with_backwards_motion = cfg.allow_init_with_backwards_motion;
   trajectory.global_plan_viapoint_sep = cfg.global_plan_viapoint_sep;
