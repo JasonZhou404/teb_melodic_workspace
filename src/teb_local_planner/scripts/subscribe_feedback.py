@@ -16,11 +16,7 @@ from shapely.geometry import Polygon, LineString, Point
 MKZ_FRONT_EDGE_TO_CENTER = 3.89
 MKZ_BACK_EDGE_TO_CENTER = 1.043
 MKZ_WIDTH = 2.11
-
-RESULTS_TABLE_CSV = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                 '../scripts/test_results.csv'))
-
-print("RESULTS_TABLE_CSV are: " + RESULTS_TABLE_CSV)
+PLATFORM_DIR = os.path.dirname(__file__)
 
 
 def create_off_centered_box(rear_x, rear_y, heading, width=MKZ_WIDTH,
@@ -71,6 +67,7 @@ def feedback_callback(data):
     global trajectory
     global time
     global cur_start_pose_id
+    global result_table_csv
     if not data.trajectories:  # empty
         trajectory = []
         time = None
@@ -78,6 +75,10 @@ def feedback_callback(data):
     trajectory = data.trajectories[data.selected_trajectory_idx].trajectory
     time = data.computation_time
     cur_start_pose_id = data.start_pose
+    result_table_csv = os.path.abspath(
+        os.path.join(PLATFORM_DIR,
+                     f'../scripts/test_results_{data.dt_ref}.csv'))
+    print("RESULTS_TABLE_CSV are: " + result_table_csv)
 
 
 def plot_velocity_profile(fig, ax_v, t, v):
@@ -106,19 +107,28 @@ def dump_statistics():
     print(timing_table)
     print(collision_table)
     print(curvature_invalid_table)
+
     success_table = [not a and not b for a, b in zip(
         collision_table, curvature_invalid_table)]
-    with open(RESULTS_TABLE_CSV, 'w') as csvfile:
+    with open(result_table_csv, 'w') as csvfile:
         csv.writer(csvfile).writerow(['start_pose_id',
                                       'average time is {}'.format(
                                           sum(timing_table) / len(timing_table)),
+                                      f'min time is {min(timing_table)}',
                                       f'max time is {max(timing_table)}',
-                                      f'min time is {min(timing_table)}'
                                       'collision rate is {}'.format(
                                           sum(collision_table) / len(collision_table)),
                                       'curvature invalid rate is {}'.format(
                                           sum(curvature_invalid_table) / len(curvature_invalid_table)),
                                       'success rate is {}'.format(sum(success_table) / len(success_table))])
+        csv.writer(csvfile).writerow([f'mean lon_jerk_max is {sum(max_lon_jerk_table) / len(max_lon_jerk_table)}',
+                                      f'mean lon_jerk_mean is {sum(mean_lon_jerk_table) / len(mean_lon_jerk_table)}',
+                                      f'mean hit_bound_lon_jerk is {sum(hit_bound_lon_jerk_table)/len(hit_bound_lon_jerk_table)}'
+                                      ])
+        csv.writer(csvfile).writerow([f'mean lat_jerk_max is {sum(max_lat_jerk_table) / len(max_lat_jerk_table)}',
+                                      f'mean lat_jerk_mean is {sum(mean_lat_jerk_table) / len(mean_lat_jerk_table)}',
+                                      f'mean hit_bound_lat_jerk is {sum(hit_bound_lat_jerk_table)/len(hit_bound_lat_jerk_table)}'
+                                      ])
         for i in range(len(timing_table)):
             csv.writer(csvfile).writerow(
                 [start_pose_id_table[i],
@@ -134,6 +144,15 @@ def feedback_subscriber():
     global collision_table
     global start_pose_id_table
     global curvature_invalid_table
+    global max_lon_jerk_table
+    global mean_lon_jerk_table
+    global hit_bound_lon_jerk_table
+    global max_lat_jerk_table
+    global mean_lat_jerk_table
+    global hit_bound_lat_jerk_table
+
+    lon_jerk_bound = 1.0
+    lat_jerk_bound = 2.0
 
     rospy.init_node("test_feedback_subscriber", anonymous=True)
 
@@ -141,6 +160,7 @@ def feedback_subscriber():
     topic_name = rospy.get_param('~feedback_topic', topic_name)
     rospy.Subscriber(topic_name, FeedbackMsg, feedback_callback,
                      queue_size=10)  # define feedback topic here!
+    # print("RESULTS_TABLE_CSV are: " + result_table_csv)
 
     rospy.loginfo(
         "Feedback published on '%s'.", topic_name)
@@ -175,6 +195,10 @@ def feedback_subscriber():
         omega = []
         s = []
         curvature = []
+        a = []
+        jerk = []
+        lat_jerk = []
+        lon_jerk = []
 
         pre_pose = [trajectory[0].pose.position.x,
                     trajectory[0].pose.position.y]
@@ -182,6 +206,8 @@ def feedback_subscriber():
         for point in trajectory:
             t.append(point.time_from_start.to_sec())
             v.append(point.velocity.linear.x)
+            if len(v) >= 2:
+                a.append(v[-1] - v[-2] / t[-1])
             omega.append(point.velocity.angular.z)
             if abs(v[-1]) < 0.1:
                 instant_curvature = "NAN"
@@ -198,13 +224,13 @@ def feedback_subscriber():
                 curvature[i] = curvature[i + 1] if i + \
                     1 < len(curvature) else curvature[i - 1]
 
-        plot_velocity_profile(fig, ax_v, np.asarray(
-            t), np.asarray(v))
+        plot_velocity_profile(fig, ax_v, np.asarray(t), np.asarray(v))
         plot_curvature_profile(
             fig, ax_curvature, np.asarray(s), np.asarray(curvature))
 
         if time is not None:
             timing_table.append(time)
+            start_pose_id_table.append(cur_start_pose_id)
 
         collision_table.append(False)
         for i in range(len(trajectory)):
@@ -219,16 +245,41 @@ def feedback_subscriber():
             if ego_box.intersects(upper_boundaries) or ego_box.intersects(lower_boundaries):
                 collision_table[-1] = True
                 break
-
-        start_pose_id_table.append(last_start_pose_id)
+            if i != 0 and i < len(trajectory) - 1:
+                # note: len(a) = len(trajectory)-1
+                # jerk
+                jerk.append((a[i] - a[i - 1]) / t[i])
+                # lat jerk
+                if curvature[i] == "NAN" or curvature[i - 1] == "NAN":
+                    break
+                lat_acc_i = v[i] ** 2 * curvature[i]
+                lat_acc_i_minus_1 = v[i - 1] ** 2 * curvature[i - 1]
+                lat_jerk.append((lat_acc_i - lat_acc_i_minus_1) / t[i])
+                # lon jerk
+                lon_acc_i = a[i]
+                lon_acc_i_minus_1 = a[i - 1]
+                lon_jerk.append((lon_acc_i - lon_acc_i_minus_1) / t[i])
 
         curvature_invalid_table.append(False)
         for kappa in curvature:
             # 0.21 is used as a buffer to 0.2
             if kappa != "NAN" and abs(kappa) > 0.21:
-                print(kappa)
+                print(f'current kappa is {kappa}')
                 curvature_invalid_table[-1] = True
                 break
+        if len(lon_jerk) < 1 or len(lat_jerk) < 1:
+            continue
+        lon_jerk_abs = [abs(elem) for elem in lon_jerk]
+        max_lon_jerk_table.append(max(lon_jerk_abs))
+        mean_lon_jerk_table.append(sum(lon_jerk_abs) / len(lon_jerk_abs))
+        hit_bound_lon_jerk_table.append(
+            sum([1.0 for elem in lon_jerk_abs if elem > lon_jerk_bound]) / len(lon_jerk_abs))
+
+        lat_jerk_abs = [abs(elem) for elem in lat_jerk]
+        max_lat_jerk_table.append(max(lat_jerk_abs))
+        mean_lat_jerk_table.append(sum(lat_jerk_abs) / len(lat_jerk_abs))
+        hit_bound_lat_jerk_table.append(
+            sum([1.0 for elem in lat_jerk_abs if elem > lat_jerk_bound]) / len(lat_jerk_abs))
         r.sleep()
 
 
@@ -241,6 +292,12 @@ if __name__ == '__main__':
         collision_table = []
         start_pose_id_table = []
         curvature_invalid_table = []
+        max_lon_jerk_table = []
+        mean_lon_jerk_table = []
+        hit_bound_lon_jerk_table = []
+        max_lat_jerk_table = []
+        mean_lat_jerk_table = []
+        hit_bound_lat_jerk_table = []
         feedback_subscriber()
     except rospy.ROSInterruptException:
         pass
