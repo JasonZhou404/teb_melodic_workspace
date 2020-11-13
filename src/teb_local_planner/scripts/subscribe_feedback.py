@@ -210,7 +210,7 @@ def feedback_subscriber():
                 a.append(v[-1] - v[-2] / t[-1])
             omega.append(point.velocity.angular.z)
             if abs(v[-1]) < 0.1:
-                instant_curvature = "NAN"
+                instant_curvature = 0
             else:
                 instant_curvature = omega[-1] / v[-1]
             curvature.append(instant_curvature)
@@ -219,14 +219,24 @@ def feedback_subscriber():
             s.append(accumulated_s)
             pre_pose = [point.pose.position.x, point.pose.position.y]
 
-        for i in range(len(curvature)):
-            if curvature[i] == "NAN":
-                curvature[i] = curvature[i + 1] if i + \
-                    1 < len(curvature) else curvature[i - 1]
+        # for i in range(len(curvature)):
+        #     if curvature[i] == "NAN":
+        #         curvature[i] = curvature[i + 1] if i + \
+        #             1 < len(curvature) else curvature[i - 1]
 
         plot_velocity_profile(fig, ax_v, np.asarray(t), np.asarray(v))
         plot_curvature_profile(
             fig, ax_curvature, np.asarray(s), np.asarray(curvature))
+        print('../{}.png'.format(cur_start_pose_id))
+        plotter.savefig('../{}.png'.format(cur_start_pose_id))
+
+        test_root_dir = "/home/jinyun/dev/"
+        teb_curvature_filename = os.path.join(test_root_dir, "teb_curvature.txt")
+        s_filename = os.path.join(test_root_dir, "teb_traversal_distance.txt")
+        with open(teb_curvature_filename, 'w') as csvfile:
+            csv.writer(csvfile).writerows([[number] for number in curvature])
+        with open(s_filename, 'w') as csvfile:
+            csv.writer(csvfile).writerows([[number] for number in s])
 
         if time is not None:
             timing_table.append(time)

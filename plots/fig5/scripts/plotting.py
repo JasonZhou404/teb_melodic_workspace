@@ -81,7 +81,7 @@ def plot(data, metrics):
         line_count += 1
 
 
-    plt.xlim((0, 27))
+    plt.xlim((0, 22))
     plt.ylim((-0.3, 0.3))
 
     plt.legend(loc=2, bbox_to_anchor=(0.01, 0.98), borderaxespad=0,
@@ -108,7 +108,8 @@ def main():
     cases = ['fig5']
     for case in cases:
         # output path
-        input = f'plots/{case}/data'
+        # input = f'plots/{case}/data/at_0_3.5_dt0.5_with_bad_teb'
+        input = f'plots/{case}/data/at_1_3_dt0.5_with_ok_teb/'
         dir_path = os.path.dirname(input)
         base_path = os.path.basename(input)
 
